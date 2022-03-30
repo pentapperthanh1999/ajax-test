@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="list-render">List 1</h2>
+                <ul class="list">
+                </ul>
+                <div class="action">
+                    <a href="#" class="btn btn-primary add">Add Item</a>
+                    <a href="#" class="btn btn-danger remove">Remove All</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box-content">
+                    <div class="box red" onclick="color(this)">
+                        
+                    </div>
+                    <div class="box green" onclick="color(this)">
+                        
+                    </div>
+                    <div class="box blue" onclick="color(this)">
+                        
+                    </div>
+                    <div class="box yellow" onclick="color(this)">
+                        
+                    </div>
+                </div>
+                <div class="content">
+                    Lorem ipsum dolor sit amet.
+                </div>
+                <button class="btn btn-secondary reset">Reset</button>
+            </div>
+            <div class="col-md-6">
+                
+            </div>
+        </div>
+        <div class="row example">
+            <input type="text" name="content" id="content" placeholder="content">
+            <input type="text" name="color" id="color" placeholder="input Color">
+            <input type="number" name="font-size" id="fontSize" placeholder="input Font-size">
+            <input type="number" name="border" id="border" placeholder="input Border">
+            <select name="" id="viTri">
+                <option value="" disabled>Chon vi tri</option>
+                <option value="center">Center</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+            </select>
+            <button id="create">Add</button>
+            </div>
+            <p style="border:1px solid" id="box-content">Content</p>
+        </div>
+    </div>
+</body>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+    .box-content {
+        display: flex;
+    }
+    .red {
+        background: red;
+    }
+
+    .green {
+        background: green;
+    }
+
+    .blue {
+        background: blue;
+    }
+    .yellow {
+        background: yellow;
+    }
+    .box {
+        width: 50px;
+        height: 50px;
+        border: 1px solid #333;
+    }
+
+    .image {
+        height: 500px;
+        width: 600px;
+    }
+    .image img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .image img:nth-child(2){
+        mix-blend-mode: multiply;
+    }
+
+    .child {
+        cursor: pointer;
+    }
+    
+</style>
+<script
+  src="https://code.jquery.com/jquery-3.6.0.js"
+  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="./main.js"></script>
+</html>
+
+
+<script>
+    $(document).ready(function(){
+        $('#create').click(function(){
+            var i = 1;
+           var content = $('#content').val();
+           var color = $('#color').val();
+           var fontSize = $('#fontSize').val();
+           var border = $('#border').val();
+           var viTri = $('#viTri').val();
+           $('#box-content').append(
+               `
+                <p style="color: ${color}; font-size: ${fontSize}px; border: ${border}px solid; text-align: ${viTri}" class="child" id="child">${content}</p>
+               `
+           );
+        //    $('input').val("");
+            var child = $('.child');
+            child.on('click', function(e) {
+                $(this).remove();
+            })
+        })
+    })
+</script>

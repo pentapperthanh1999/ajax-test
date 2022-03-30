@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-md-3">
+				<form action="" class="form_action_create" method="POST">
+					<h2 class="heading">Create Class</h2>
+				  	<div class="form-group">
+					    <label>Class Code</label>
+					    <input type="text" class="form-control" placeholder="Class Code" name="class_code" class="class_code" id="class_code">
+						<div class="message error_code">
+
+						</div>
+				  	</div>
+				  	<div class="form-group">
+					    <label>Class Name</label>
+					    <input type="text" class="form-control" placeholder="Class Name" name="class_name" class="class_name" id="class_name">
+						<div class="message error_name">
+
+						</div>
+				  	</div>
+					<button type="submit" class="btn btn-primary create_class">Submit</button>
+					<button class="btn btn-secondary cancel">Cancel</button>
+				</form>
+				<form action="" class="form_action_update" method="POST">
+					<h2 class="heading">Update Class</h2>
+				  	<div class="form-group">
+					    <label>Class Code</label>
+					    <input type="text" class="form-control" placeholder="Class Code" name="class_code" class="class_code" id="class_code_update">
+						<div class="message error_code">
+
+						</div>
+				  	</div>
+				  	<div class="form-group">
+					    <label>Class Name</label>
+					    <input type="text" class="form-control" placeholder="Class Name" name="class_name" class="class_name" id="class_name_update">
+						<div class="message error_name">
+
+						</div>
+				  	</div>
+					<button type="submit" class="btn btn-primary update_class">Submit</button>
+					<button class="btn btn-secondary cancel">Cancel</button>
+				</form>
+				<div class="message">
+					
+				</div>
+			</div>
+			<div class="col-md-9">
+				<h1 class="heading">Class Management</h1>
+				<div class="content" id="add_class">
+					<div class="btn btn-success btn-add" id="create">+</div>
+					<table class="table">
+						<div class="notion"></div>
+						<thead>
+						  <tr>
+							<th scope="col">ID</th>
+							<th scope="col">Code</th>
+							<th scope="col">Name</th>
+							<th>Action</th>
+						  </tr>
+						</thead>
+						<tbody>
+						  
+						</tbody>
+					  </table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.6.0.js"
+  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</html>
+<style>
+	.message {
+		color: red;
+		font-size: 14px;
+		font-weight: 500;
+	}
+	.form_action_update, .form_action_create {
+		display: none;
+	}
+
+	.btn-add {
+		margin-bottom: 20px;
+	}
+</style>
+<script>
+
+	$(document).ready(function() {
+		//render
+		function render() {
+			let url = 'http://localhost/php_mvc/apiclasses';
+			let html;
+			$.ajax(url, {
+				type: 'GET',
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					let elm = '';
+					if (data) {
+						data.map((classes, index) => {
+							let elm = `
+								<tr>
+									<th scope="row">${classes.id}</th>
+									<td>${classes.code}</td>
+									<td>${classes.name}</td>
+									<td>
+										<button class="btn btn-primary edit_class" data-id="${classes.id}">Update
+										</button>
+										<button type="button" class="btn btn-danger delete_class" data-id="${classes.id}" confirm("Are you sure?")>Delete</button>
+									</td>
+								</tr>
+							`
+							html += elm;
+						});
+					}
+					$('.content tbody').html(html);
+				},
+				error: function(e) {
+					$('.content tbody').text(`${e.responseJSON.message}`);
+				}
+			});
+		}
+		render();
+		
+		//create
+		let btnCreate = $('#create');
+		let urlClass = 'http://localhost/php_mvc/apiclasses/create';
+		var formCreate = $('.form_action_create');
+		var formUpdate = $('.form_action_update');
+		//cannel action
+		$('.cancel').click(function(e) {
+			formCreate.hide();
+			formUpdate.hide();
+			e.preventDefault();
+		})
+		btnCreate.click((e) => {
+			formUpdate.hide();
+			formCreate.show();
+			e.preventDefault();
+		})
+		
+		formCreate.submit(function(e) {
+			
+			let name = $('#class_name').val();
+			let code = $('#class_code').val();
+			
+			if (!code && code == '') {
+				$('.error_code').text('khong duoc bo trong');
+			} else {
+				$('.error_code').text('');
+			}
+
+			if (!name && name == '') {
+				$('.error_name').text('khong duoc bo trong');
+			} else {
+				$('.error_name').text('');
+			}
+
+			let data = (code && name) ?  {
+				code,
+				name
+			} : '';
+			$.ajax({
+				url: urlClass,
+				type: 'POST',
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify(data),
+				beforeSend: function () {
+					return data ? true : false;
+				},
+				success: function(result) {
+					$('.notion').html(`
+						<p class="alert alert-success">${result.message}</p>
+					`);
+					setTimeout(function() {
+						$('.notion').fadeOut('fast');
+					}, 1000);
+					render();
+				},
+				error: function(msg) {
+					
+				},
+				complete: function () {
+					
+					formCreate[0].reset();
+					formCreate.hide();
+				}
+			});
+			return false;
+			e.preventDefault();
+		});
+		//delete class
+		
+		$(document).on('click', '.delete_class', function(e) {
+			let result = confirm('Are you sure?');
+			if (result) {
+				let id = $(this).attr('data-id');
+				let data = (id) ?  { id } : '';
+				let urlDelete = `http://localhost/php_mvc/apiclasses/delete/${id}`;
+				$.ajax({
+					url: urlDelete,
+					type: "POST",
+					dataType: "json",
+					contentType: "application/json; charset=utf-8",
+					data: JSON.stringify(data),
+					beforeSend: function() {
+					},
+					success: function(result) {
+						$('.notion').html(`
+							<p class="alert alert-success">${result.message}</p>
+						`);
+						render();
+						
+					},
+					error: function(msg) {
+						$('.message').text('404');
+					}
+				})
+				
+			}
+			e.preventDefault();
+		})
+
+		$(document).on('click', '.edit_class', function(e) {
+			
+			// formUpdate.show();
+			let id = $(this).attr('data-id');
+			let data = (id) ?  { id } : '';
+			let urlSingle = `http://localhost/php_mvc/apiclasses/single/${id}`;
+			$.ajax({
+				url: urlSingle,
+				type: 'GET',
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify(data),
+				beforeSend: function() {
+					formCreate.hide();
+				},
+				success: function(result) {
+					$('#class_code_update').attr('value', result.code);
+					$('#class_name_update').attr('value', result.name);
+					$('.update_class').attr('data-id', result.id);
+					formUpdate.show();
+				},
+				error: function(msg) {
+					$('.message').text('404');
+				}
+			})
+		});
+
+		$(document).on('click', '.update_class', function(e) {
+			e.preventDefault();
+			let id = $(this).attr("data-id");
+			let name = $('#class_name_update').val();
+			let code = $('#class_code_update').val();
+			
+			if (!code && code == '') {
+				$('.error_code').text('khong duoc bo trong');
+			} else {
+				$('.error_code').text('');
+			}
+
+			if (!name && name == '') {
+				$('.error_name').text('khong duoc bo trong');
+			} else {
+				$('.error_name').text('');
+			}
+
+			let data = (code && name) ?  {
+				id,
+				code,
+				name
+			} : '';
+			let urlUpdate = `http://localhost/php_mvc/apiclasses/update/${id}`;
+			$.ajax({
+				url: urlUpdate,
+				type: 'POST',
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify(data),
+				beforeSend: function () {
+					return data ? true : false;
+				},
+				success: function(result) {
+					$('.notion').html(`
+						<p class="alert alert-success">${result.message}</p>
+					`);
+					render();
+				},
+				error: function(msg) {
+					console.log('error');
+				},
+				complete: function () {
+					formUpdate.hide();
+					formUpdate[0].reset();
+				}
+			});
+		})
+	})
+
+</script>
